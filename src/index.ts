@@ -5,10 +5,11 @@ import type { NotifyPayload } from './types/index.js';
 import { NotificationFactory } from './factories/NotificationFactory.js';
 
 const app = new Hono();
+
 // Auth Middleware: Verify API Key from the global environment
 app.use('/v1/*', async (c, next) => {
   const apiKey = c.req.header('X-Api-Key');
-  const serverKey = env.API_KEY;
+  const serverKey = (env as any).API_KEY;
 
   console.log('--- [Auth Debug] ---');
   console.log('Request Key:', apiKey);
