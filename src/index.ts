@@ -31,7 +31,7 @@ app.use('/v1/*', async (c, next) => {
   }
 
   if (apiKey !== serverKey) {
-    console.warn(`Unauthorized access attempt: Request Key="${apiKey}", Server Key="${serverKey}"`);
+    console.warn('Unauthorized access attempt detected.');
     return c.json({
       success: false,
       message: 'Invalid API key'

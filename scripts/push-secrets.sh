@@ -3,9 +3,9 @@
 # 2. 為每個金鑰執行 wrangler secret put
 SECRETS_PATH="/Notifier"
 
-echo "🚀 Starting secrets sync from Infisical ($SECRETS_PATH) to Cloudflare Workers..."
+echo "🔍 Fetching SECRETS from Infisical (Environment: Production, Path: $SECRETS_PATH)..."
 
-infisical export --path $SECRETS_PATH --format dotenv | grep -v '^#' | while read line; do
+infisical export --path $SECRETS_PATH --format dotenv -e prod | grep -v '^#' | while read line; do
   if [ ! -z "$line" ]; then
     key=$(echo $line | cut -d '=' -f 1)
     value=$(echo $line | cut -d '=' -f 2-)
