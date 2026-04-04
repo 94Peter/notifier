@@ -6,6 +6,8 @@
     "dev": "wrangler dev",
     "dev:infisical": "infisical export --format dotenv --path /Notifier > .dev.vars && wrangler dev",
     "secrets:push": "infisical run --path /Notifier -- wrangler secret put",
+    "build": "mkdir -p public && echo \"CoachAIgent Notifier API\" > public/index.html",
+    "pages:deploy": "npm run build && wrangler pages deploy public",
     "deploy": "infisical run --path /Notifier -- wrangler deploy --remote",
     "secrets:sync": "./scripts/push-secrets.sh"
   },
