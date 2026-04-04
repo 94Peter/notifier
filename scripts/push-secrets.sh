@@ -9,8 +9,8 @@ infisical export --path $SECRETS_PATH --format dotenv -e prod | grep -v '^#' | w
   if [ ! -z "$line" ]; then
     key=$(echo $line | cut -d '=' -f 1)
     value=$(echo $line | cut -d '=' -f 2-)
-    # 移除頭尾可能存在的雙引號 (Infisical export 有時會帶引號)
-    value=$(echo "$value" | sed 's/^"//;s/"$//')
+    # 移除頭尾可能存在的雙引號或單引號 (Infisical export 有時會帶引號)
+    value=$(echo "$value" | sed "s/^['\"]//;s/['\"]$//")
     
     echo "🔒 Updating secret: $key..."
     echo "$value" | wrangler secret put "$key"
