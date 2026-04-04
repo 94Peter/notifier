@@ -3,21 +3,32 @@ import { handle } from 'hono/cloudflare-pages';
 import type { NotifyPayload } from './types/index.js';
 import { NotificationFactory } from './factories/NotificationFactory.js';
 
-const app = new Hono();
+type Env = {
+  API_KEY: string;
+  CHANNEL_DISCORD_COACHAIGENT_CRM_WEBHOOK: string;
+  CHANNEL_DISCORD_DEVSECOPS_WEBHOOK: string;
+};
+
+const app = new Hono<{ Bindings: Env }>();
 
 // Auth Middleware: Verify API Key using the Request Context (env)
 app.use('/v1/*', async (c, next) => {
   const apiKey = c.req.header('X-Api-Key');
-  const serverKey = (c.env as any).API_KEY;
+  const serverKey = c.env.API_KEY;
 
-  console.log('--- [Auth Debug] ---');
-  console.log('Request Key:', apiKey);
-  console.log('Server Binding Key (c.env):', serverKey);
-
-  if (apiKey !== serverKey) {
+  if (!serverKey) {
+    console.error('CRITICAL: API_KEY is not configured on the server.');
     return c.json({
       success: false,
-      message: 'Invalid or missing X-Api-Key'
+      message: 'Server API_KEY not configured'
+    }, 500);
+  }
+
+  if (apiKey !== serverKey) {
+    console.warn(`Unauthorized access attempt: Request Key="${apiKey}", Server Key="${serverKey}"`);
+    return c.json({
+      success: false,
+      message: 'Invalid API key'
     }, 401);
   }
   await next();
