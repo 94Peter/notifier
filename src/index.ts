@@ -1,35 +1,30 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/cloudflare-pages';
-import type { Bindings, NotifyPayload } from './types/index.js';
+import { env } from 'cloudflare:workers';
+import type { NotifyPayload } from './types/index.js';
 import { NotificationFactory } from './factories/NotificationFactory.js';
 
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono();
 
-/**
- * Middleware: Verify X-Api-Key before processing the notification
- */
+// Auth Middleware: Verify API Key from the global environment
 app.use('/v1/*', async (c, next) => {
   const apiKey = c.req.header('X-Api-Key');
-  console.log(apiKey, c.env.API_KEY);
-  if (apiKey !== c.env.API_KEY) {
+  const serverKey = (env as any).API_KEY;
+
+  if (apiKey !== serverKey) {
     return c.json({
       success: false,
-      code: 'ERR_AUTH_FAILED',
-      message: 'Invalid or missing X-Api-Key.'
+      message: 'Invalid or missing X-Api-Key'
     }, 401);
   }
   await next();
 });
 
-/**
- * POST /v1/notify - Route and send the notification via the factory
- */
+// Notify Endpoint: Generic handler for all event sources
 app.post('/v1/notify', async (c) => {
   try {
     const payload: NotifyPayload = await c.req.json();
-
-    // Use the factory to create a command and execute it
-    const command = NotificationFactory.create(payload, c.env);
+    const command = NotificationFactory.create(payload);
     await command.execute();
 
     return c.json({ success: true, message: 'Notification sent successfully.' });

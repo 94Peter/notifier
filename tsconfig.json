@@ -9,7 +9,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "esnext",
     "target": "es2020",
-    "types": [],
+    "types": ["@cloudflare/workers-types/2023-07-01"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -41,7 +41,7 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
 
-    "moduleResolution": "node10",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
   }
 }

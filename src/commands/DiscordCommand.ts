@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:workers';
 import type { NotifyPayload } from '../types/index.js';
 
 /**
@@ -11,15 +12,14 @@ export interface NotificationCommand {
  * DiscordCommand handles sending and formatting messages to Discord
  */
 export class DiscordCommand implements NotificationCommand {
-  private webhookUrl: string;
   private payload: NotifyPayload;
 
-  constructor(webhookUrl: string, payload: NotifyPayload) {
-    this.webhookUrl = webhookUrl;
+  constructor(payload: NotifyPayload) {
     this.payload = payload;
   }
 
   async execute(): Promise<void> {
+    const webhookUrl = this.getWebhookUrl(this.payload.source);
     const embedColor = this.getEmbedColor(this.payload.type);
     const fields = this.formatMetadata(this.payload.metadata);
 
@@ -33,7 +33,7 @@ export class DiscordCommand implements NotificationCommand {
       }]
     };
 
-    const response = await fetch(this.webhookUrl, {
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -42,6 +42,29 @@ export class DiscordCommand implements NotificationCommand {
     if (!response.ok) {
       throw new Error(`Discord Webhook failed with status: ${response.status}`);
     }
+  }
+
+  private getWebhookUrl(source: string): string {
+    // These keys must match what we have in Infisical/Cloudflare Dashboard
+    const envRecord = env as any;
+    let url: string | undefined;
+
+    switch (source) {
+      case 'coach-aigent-crm':
+        url = envRecord.CHANNEL_DISCORD_COACHAIGENT_CRM_WEBHOOK;
+        break;
+      case 'devsecops':
+        url = envRecord.CHANNEL_DISCORD_DEVSECOPS_WEBHOOK;
+        break;
+      default:
+        throw new Error(`Unsupported source for webhook resolution: ${source}`);
+    }
+
+    if (!url) {
+      throw new Error(`Missing Discord Webhook URL for source: ${source}`);
+    }
+
+    return url;
   }
 
   private getEmbedColor(type: string): number {
