@@ -11,6 +11,10 @@ app.use('/v1/*', async (c, next) => {
   const apiKey = c.req.header('X-Api-Key');
   const serverKey = (env as any).API_KEY;
 
+  console.log('--- [Auth Debug] ---');
+  console.log('Request Key:', apiKey);
+  console.log('Global Env Key:', serverKey);
+
   if (apiKey !== serverKey) {
     return c.json({
       success: false,
