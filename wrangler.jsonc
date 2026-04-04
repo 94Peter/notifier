@@ -1,10 +1,5 @@
 {
   "name": "notifier",
   "main": "src/index.ts",
-  "compatibility_date": "2024-04-04",
-  "vars": {
-    "API_KEY": "PLACEHOLDER_NOTIFY_API_KEY",
-    "CHANNEL_DISCORD_COACHAIGENT_CRM_WEBHOOK": "PLACEHOLDER_CRM_WEBHOOK",
-    "CHANNEL_DISCORD_DEVSECOPS_WEBHOOK": "PLACEHOLDER_DEVSECOPS_WEBHOOK"
-  }
+  "compatibility_date": "2024-04-04"
 }
