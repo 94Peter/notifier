@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/cloudflare-pages';
-import { env } from 'cloudflare:workers';
 import type { NotifyPayload } from './types/index.js';
 import { NotificationFactory } from './factories/NotificationFactory.js';
 

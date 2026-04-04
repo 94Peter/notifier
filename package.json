@@ -6,17 +6,21 @@
     "dev": "wrangler dev",
     "dev:infisical": "infisical export --format dotenv --path /Notifier > .dev.vars && wrangler dev",
     "secrets:push": "infisical run --path /Notifier -- wrangler secret put",
-    "build": "mkdir -p public && echo \"CoachAIgent\" > public/index.html",
+    "build": "mkdir -p dist public && esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --format=esm --minify && echo 'CoachAIgent' > public/index.html",
     "pages:deploy": "npm run build && wrangler pages deploy public",
     "deploy": "wrangler deploy",
     "deploy:local": "infisical run --path /Notifier -- wrangler deploy",
-    "secrets:sync": "./scripts/push-secrets.sh"
+    "secrets:sync": "./scripts/push-secrets.sh",
+    "test:miniflare": "npm run build && tsx tests/miniflare.test.ts"
   },
   "dependencies": {
     "hono": "^4.0.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260404.1",
+    "esbuild": "^0.28.0",
+    "miniflare": "^4.20260401.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.0",
     "wrangler": "^3.0.0"
   }
