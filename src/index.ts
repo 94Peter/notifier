@@ -6,14 +6,14 @@ import { NotificationFactory } from './factories/NotificationFactory.js';
 
 const app = new Hono();
 
-// Auth Middleware: Verify API Key from the global environment
+// Auth Middleware: Verify API Key using the Request Context (env)
 app.use('/v1/*', async (c, next) => {
   const apiKey = c.req.header('X-Api-Key');
-  const serverKey = (env as any).API_KEY;
+  const serverKey = (c.env as any).API_KEY;
 
   console.log('--- [Auth Debug] ---');
   console.log('Request Key:', apiKey);
-  console.log('Global Env Key:', serverKey);
+  console.log('Server Binding Key (c.env):', serverKey);
 
   if (apiKey !== serverKey) {
     return c.json({
@@ -28,7 +28,7 @@ app.use('/v1/*', async (c, next) => {
 app.post('/v1/notify', async (c) => {
   try {
     const payload: NotifyPayload = await c.req.json();
-    const command = NotificationFactory.create(payload);
+    const command = NotificationFactory.create(payload, c.env);
     await command.execute();
 
     return c.json({ success: true, message: 'Notification sent successfully.' });
