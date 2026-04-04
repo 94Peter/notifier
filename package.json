@@ -8,8 +8,8 @@
     "secrets:push": "infisical run --path /Notifier -- wrangler secret put",
     "build": "mkdir -p public && echo \"CoachAIgent\" > public/index.html",
     "pages:deploy": "npm run build && wrangler pages deploy public",
-    "deploy": "wrangler deploy --remote",
-    "deploy:local": "infisical run --path /Notifier -- wrangler deploy --remote",
+    "deploy": "wrangler deploy",
+    "deploy:local": "infisical run --path /Notifier -- wrangler deploy",
     "secrets:sync": "./scripts/push-secrets.sh"
   },
   "dependencies": {
