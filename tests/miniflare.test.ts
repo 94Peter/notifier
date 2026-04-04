@@ -18,30 +18,23 @@ async function runTest() {
 
   console.log("🚀 Miniflare 正在啟動，準備測試金鑰綁定...");
 
-  // 對模擬環境發送請求
-  const res = await mf.dispatchFetch("http://localhost:8787/v1/notify", {
-    method: "POST",
+  // ✨ 改成測試 Health Check 路徑，只比對金鑰，不打 Webhook
+  const res = await mf.dispatchFetch("http://localhost:8787/v1/health", {
+    method: "GET",
     headers: {
       "X-Api-Key": "miniflare_secret_test_key",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      source: "devsecops",
-      type: "info",
-      event: "LOCAL_SIMULATION",
-      message: "Hello from Miniflare Simulator!"
-    })
+    }
   });
 
   const body = await res.json() as any;
-  console.log("--- [模擬測試結果] ---");
+  console.log("--- [AuthProvider 測試結果] ---");
   console.log("HTTP Status:", res.status);
-  console.log("Success:", body.success);
-  
+  console.log("Auth Response:", body.message);
+
   if (res.status === 200 && body.success) {
-    console.log("✅ 恭喜！金鑰綁定 (Env Binding) 在 Miniflare 模擬環境下運作完美！");
+    console.log("✅ 恭喜！金鑰綁定 (Env Binding) 與強類型機制在 Miniflare 模擬環境下運作完美！");
   } else {
-    console.error("❌ 警告：金鑰比對失敗或代碼報錯。");
+    console.error("❌ 警告：金鑰比對失敗，請檢查 Env 注入路徑。");
   }
 
   await mf.dispose();

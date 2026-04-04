@@ -6,7 +6,7 @@
     "dev": "wrangler dev",
     "dev:infisical": "infisical export --format dotenv --path /Notifier > .dev.vars && wrangler dev",
     "secrets:push": "infisical run --path /Notifier -- wrangler secret put",
-    "build": "mkdir -p dist public && esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --format=esm --minify && echo 'CoachAIgent' > public/index.html",
+    "build": "mkdir -p dist public && esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --format=esm --external:cloudflare:workers --minify && echo 'CoachAIgent' > public/index.html",
     "pages:deploy": "npm run build && wrangler pages deploy public",
     "deploy": "wrangler deploy",
     "deploy:local": "infisical run --path /Notifier -- wrangler deploy",

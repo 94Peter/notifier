@@ -1,20 +1,26 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/cloudflare-pages';
+import { env } from 'cloudflare:workers';
 import type { NotifyPayload } from './types/index.js';
 import { NotificationFactory } from './factories/NotificationFactory.js';
 
+/**
+ * Define the Environment Bindings
+ */
 type Env = {
   API_KEY: string;
   CHANNEL_DISCORD_COACHAIGENT_CRM_WEBHOOK: string;
   CHANNEL_DISCORD_DEVSECOPS_WEBHOOK: string;
 };
 
-const app = new Hono<{ Bindings: Env }>();
+// Top-level strongly-typed environment access
+const { API_KEY: serverKey } = env as unknown as Env;
 
-// Auth Middleware: Verify API Key using the Request Context (env)
+const app = new Hono();
+
+// Auth Middleware: Verify API Key using the global environment
 app.use('/v1/*', async (c, next) => {
   const apiKey = c.req.header('X-Api-Key');
-  const serverKey = c.env.API_KEY;
 
   if (!serverKey) {
     console.error('CRITICAL: API_KEY is not configured on the server.');
@@ -34,11 +40,17 @@ app.use('/v1/*', async (c, next) => {
   await next();
 });
 
+// Health & Auth Check: Verify connectivity and API key without sending notifications
+app.get('/v1/health', (c) => {
+  return c.json({ success: true, message: 'Authentication valid' });
+});
+
 // Notify Endpoint: Generic handler for all event sources
 app.post('/v1/notify', async (c) => {
   try {
     const payload: NotifyPayload = await c.req.json();
-    const command = NotificationFactory.create(payload, c.env);
+    // Use the global env for the factory as well
+    const command = NotificationFactory.create(payload, env);
     await command.execute();
 
     return c.json({ success: true, message: 'Notification sent successfully.' });
