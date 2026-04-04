@@ -1,0 +1,20 @@
+{
+  "name": "notifier",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:infisical": "infisical export --format dotenv --path /Notifier > .dev.vars && wrangler dev",
+    "secrets:push": "infisical run --path /Notifier -- wrangler secret put",
+    "deploy": "infisical run --path /Notifier -- wrangler deploy --remote",
+    "secrets:sync": "./scripts/push-secrets.sh"
+  },
+  "dependencies": {
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240101.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^3.0.0"
+  }
+}

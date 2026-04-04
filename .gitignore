@@ -1,0 +1,18 @@
+# Cloudflare Workers / Wrangler
+.wrangler/
+.dev.vars
+
+# Dependencies
+node_modules/
+
+# Build Output
+dist/
+
+# OS Files
+.DS_Store
+
+# Notifier rules
+.wrangler/
+.dev.vars
+node_modules/
+dist/
