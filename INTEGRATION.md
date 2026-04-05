@@ -29,7 +29,17 @@
 | `type` | string | ✅ | 通知等級：`success`, `info`, `warning`, `error` |
 | `event` | string | ✅ | 事件摘要 (Discord 標題) |
 | `message` | string | ✅ | 事件詳解 (Discord 內文) |
+| `thread_name`| string | ❌ | 論壇貼文標題 (適用於論壇頻道) |
 | `metadata` | object | ❌ | 關鍵數據 (以表格型態顯示，Key-Value 對照) |
+
+---
+
+## 🏛️ 論壇頻道 (Forum) 支援特別說明
+本服務已針對 **Discord 論壇頻道** 進行優化：
+- **一般頻道**: 直接發送訊息。
+- **論壇頻道**: 
+    - 建議傳入 `thread_name` 作為新貼文標題。
+    - **【自動備援】針對 `coach-aigent-crm`**: 由於此來源為論壇頻道，若你**未提供** `thread_name`，系統將自動提取 `event` 欄位並組合成貼文標題 (例如：`[CRM_BOOKING] CRM 通知`)。
 
 ### 示例請求 (CRM 預約通知)
 ```bash
