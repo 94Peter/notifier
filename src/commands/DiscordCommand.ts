@@ -23,7 +23,7 @@ export class DiscordCommand implements NotificationCommand {
     const embedColor = this.getEmbedColor(this.payload.type);
     const fields = this.formatMetadata(this.payload.metadata);
 
-    const body = {
+    const body: any = {
       embeds: [{
         title: `[${this.payload.event}] ${this.payload.source}`,
         description: this.payload.message,
@@ -32,6 +32,11 @@ export class DiscordCommand implements NotificationCommand {
         timestamp: new Date().toISOString(),
       }]
     };
+
+    // 如果有 thread_name，代表要對論壇頻道發言
+    if (this.payload.thread_name) {
+      body.thread_name = this.payload.thread_name;
+    }
 
     const response = await fetch(this.webhookUrl, {
       method: 'POST',

@@ -6,6 +6,7 @@ export interface NotifyPayload {
   type: 'success' | 'info' | 'warning' | 'error' | 'critical';
   event: string;
   message: string;
+  thread_name?: string;
   metadata?: Record<string, unknown>;
 }
 
