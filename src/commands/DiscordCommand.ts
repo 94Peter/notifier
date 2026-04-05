@@ -36,6 +36,9 @@ export class DiscordCommand implements NotificationCommand {
     // 如果有 thread_name，代表要對論壇頻道發言
     if (this.payload.thread_name) {
       body.thread_name = this.payload.thread_name;
+    } else if (this.payload.source === 'coach-aigent-crm') {
+      // 針對 CRM 的論壇頻道做自動備援：若沒給 thread_name，直接把 event 當作標題
+      body.thread_name = `[${this.payload.event}] CRM 通知`;
     }
 
     const response = await fetch(this.webhookUrl, {
